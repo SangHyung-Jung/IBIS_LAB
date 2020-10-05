@@ -1,22 +1,10 @@
-'''
-얘는 보조지표 (Tech indi) 가져오는 py인데
-만약에 너가 path같은거 전부 맞춰서 실행해보면서 할 생각이라면
-여기는 path 정도만 수정해도 될듯?
-딱히 건드릴꺼는 없어
-'''
-
-
-import talib
+import talib  # from https://mrjbq7.github.io/ta-lib/
 from talib import MA_Type
-import os
 import numpy as np
 import pandas as pd
 
-load_path = "/home/ir1067/price_data/"
-save_path = "/home/ir1067/price_w_indicator/"
-df = pd.read_csv('/home/ir1067/data/kospi.csv')
 
-def add_tech_stats(company):
+def add_tech_stats(company, load_path="/home/ir1067/price_data/", save_path="/home/ir1067/price_w_indicator/"):
 
     df = pd.read_excel(load_path + company + '.xlsx', encoding = 'cp949', index_col=0).astype('double')
     
@@ -76,14 +64,3 @@ def add_tech_stats(company):
     df = pd.concat([df, tmp], axis=1)
 
     df.to_csv(save_path + company + '.csv')
-
-for company in os.listdir(load_path):
-    if company == "유한양행.xlsx":
-        pass
-    else:
-        continue
-    print(company + 'start')
-    add_tech_stats(company[:-5])
-
-
-#https://mrjbq7.github.io/ta-lib/

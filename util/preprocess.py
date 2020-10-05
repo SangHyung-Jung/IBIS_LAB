@@ -6,20 +6,23 @@ from khaiii import KhaiiiApi
 
 
 class NewsProcessor:
-    def __init__(self):
-        # .xlsx file = news text data
-        self.xlsx_list = [name for name in os.listdir('/home/ir1067/FOR_TITLE/Title_33_2014_all') if ('.xlsx' in name) & ('#' not in name)]
+    def __init__(self, news_path='/home/ir1067/FOR_TITLE/Title_33_2014_all', fin_path='/home/ir1067/price_w_indicator', kospi_data_path="/home/ir1067/data/kospi.csv"):
+        # path
+        self.fin_path = fin_path
+        
+        # .xlsx file -> news text data
+        self.xlsx_list = [name for name in os.listdir(news_path) if ('.xlsx' in name) & ('#' not in name)]
         self.xlsx_list.sort()
 
         # company names
         self.company_list = set([file[:-5] for file in self.xlsx_list])
 
-        # .csv file = financial data [open, close, price]
-        self.csv_list = [name for name in os.listdir('/home/ir1067/price_w_indicator') if ('.csv' in name) & ('#' not in name)]
+        # .csv file -> financial data [open, close, price]
+        self.csv_list = [name for name in os.listdir(fin_path) if ('.csv' in name) & ('#' not in name)]
         self.csv_list.sort()
 
         # kospi market data [open, close]
-        self.kospi = pd.read_csv("/home/ir1067/data/kospi.csv").set_index('date')
+        self.kospi = pd.read_csv(kospi_data_path).set_index('date')
         self.kospi.index = pd.to_datetime(self.kospi.index)
         self.kospi = self.kospi[['open', 'close']]
         self.kospi['open'] = [re.sub(',', '', text) for text in self.kospi['open']]
@@ -34,6 +37,7 @@ class NewsProcessor:
         print("- News data (xlsx):\t{}".format(len(self.xlsx_list)))
         print("- Price data (csv):\t{}".format(len(self.csv_list)))
         print("- Company count:\t{}".format(len(self.company_list)))
+        print("NewsProcessor init complete.")
 
     def get_xlsx(self, company_name):
         output = pd.DataFrame()
@@ -46,7 +50,7 @@ class NewsProcessor:
             output = pd.concat([output, news])
         output.reset_index(inplace=True, drop=True)
 
-        print("Data NaN info")
+        print("Data NaN infomation")
         for col in output.columns:
             output[col] = [text if text != "" else np.nan for text in output[col]]
         print(output.isna().sum())
@@ -63,7 +67,7 @@ class NewsProcessor:
         data_list = [filename for filename in self.csv_list if company_name in filename]
 
         for filename in data_list:
-            price = pd.read_csv('/home/ir1067/price_w_indicator/' + filename, index_col=0)
+            price = pd.read_csv(self.fin_path + filename, index_col=0)
             output = pd.concat([output, price])
 
         output.index = pd.to_datetime(output.index, format="%Y.%m.%d")
@@ -153,12 +157,8 @@ class NewsProcessor:
 
 
     def labeling(self, data, kospi, days):
-        #data = pd.read_csv('/home/ir1067/price_w_indicator/유한양행.csv', index_col=0)
-        #kospi = pd.read_csv('/home/ir1067/data/kospi.csv', index_col=0)
         data.index = pd.to_datetime(data.index)
-        #data = data.loc[self.kospi.index]
 
-        #data = data.loc[kospi.index]
         kospi.columns = ['k_open', 'k_close']
         data = pd.merge(data, kospi, how='right', left_index=True, right_index=True)
         data = data.dropna(how='any')
