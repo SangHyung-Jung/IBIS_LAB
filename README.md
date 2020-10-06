@@ -1,1 +1,6 @@
-# IBIS_LAB
+# Predicting stock prices based on online news content and technical indicators by combinatorial analysis using CNN and LSTM with self-attention
+
+## Abstract
+
+The stock market changes continuously as new information emerges, affecting the judgments of investors. Online news articles are valued as a traditional window to inform investors about various information that affects the stock market. This paper proposed new ways to utilize online news articles with technical indicators. The suggested hybrid model consists of three models. First, a self-attention-based convolutional neural network (CNN) model, considered to be better in interpreting the semantics of long texts, uses news content as inputs. Second, a self-attention-based, bi-long short-term memory (bi-LSTM) neural network model for short texts utilizes news titles as inputs. Third, a bi-LSTM model, considered to be better in analyzing context information and time-series models, uses 19 technical indicators as inputs. We used news articles from the previous day and technical indicators from the past seven days to predict the share price of the next day. An experiment was performed with Korean stock market data and news articles from 33 top companies over three years. Through this experiment, our proposed model showed better performance than previous approaches, which have mainly focused on news titles. This paper demonstrated that news titles and content should be treated in different ways for superior stock price prediction.
+
